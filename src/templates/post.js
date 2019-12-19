@@ -3,8 +3,20 @@ import { graphql } from 'gatsby';
 import { css } from '@emotion/core';
 import Layout from '../components/Layout';
 import ReadLink from '../components/read-link';
+import { MDXRenderer } from 'gatsby-plugin-mdx';
 
-const PostTemplate = ({ pageContext }) => {
+export const query = graphql`
+  query($slug: String!) {
+    mdx(frontmatter: { slug: { eq: $slug } }) {
+      frontmatter {
+        title
+      }
+      body
+    }
+  }
+`;
+
+const PostTemplate = ({ data: { mdx: post } }) => {
   return (
     <Layout>
       <h1
@@ -12,11 +24,11 @@ const PostTemplate = ({ pageContext }) => {
           font-size: 0.75rem;
         `}
       >
-        Post title
+        {post.frontmatter.title}{' '}
       </h1>
-      <pre>{JSON.stringify(pageContext)}</pre>
       <p>Posted by (author)</p>
       <p>Post body goes here</p>
+      <MDXRenderer>{post.body}</MDXRenderer>
       <ReadLink to="/">Back to all posts</ReadLink>
     </Layout>
   );
